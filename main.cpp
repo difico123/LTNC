@@ -3,6 +3,8 @@
 #include"Threat.h"
 #include"things.h"
 #include"text.h"
+#include<ctime>
+#include<cstdlib>
 #undef main
 
 const int NUM_THREAT = 3;
@@ -22,7 +24,7 @@ bool init()
 	else
 	{
 		//Create window
-		g_screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_SWSURFACE);		
+		g_screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_DOUBLEBUF);
 		if (g_screen == NULL)
 		{
 			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -40,6 +42,7 @@ bool init()
 }
 int main(int agv, char* argv[])
 {
+	srand(time(NULL));
 	int Try = 0;
 tryAgain:
 	int bg_y		= 0;
@@ -61,7 +64,7 @@ tryAgain:
 	if (background == NULL) printf("Failed to load pic!");
 	if (Try == 1)
 	{
-		if (MessageBox(NULL, L"Are you want to play this game?", L"???", MB_OK | MB_ICONQUESTION) == IDOK)
+		if (MessageBox(NULL, L"Are you want to play this game?", L"???", MB_YESNO |	MB_ICONQUESTION ) == IDYES)
 		{
 			ApplySurface(background, g_screen, 43, 100);
 			SDL_Flip(g_screen);
@@ -179,6 +182,8 @@ tryAgain:
 		game_time[0].CreateGameText(g_font_text, g_screen);
 		game_time[0].SetRect(SCREEN_WIDTH - 350, 10);
 		
+		
+		
 
 		// MYCAR
 
@@ -235,6 +240,7 @@ tryAgain:
 				}
 			}
 			// Immortality
+			
 			bool check_col;
 			check_col = CheckCollision(mycar[0].GetRect(), thing[1].GetRect());
 			{
@@ -260,9 +266,14 @@ tryAgain:
 					bool Is_col = CheckCollision(mycar[0].GetRect(), threat->GetRect());
 					if (Is_col)
 					{
-						if (MessageBox(NULL, L"you lose", L"??", MB_OK) == IDOK)
+						string myString = "High Core: ";
+						myString += to_string(score-1);
+						LPWSTR ws = new wchar_t[myString.size() + 1];
+						copy(myString.begin(), myString.end(), ws);
+						ws[myString.size()] = 0;
+						if (MessageBox(NULL, ws,L"YOU DEAD", MB_OK) == IDOK)
 						{
-							if (MessageBox(NULL, L"Are you want to play this game again?", L"???", MB_OK | MB_ICONQUESTION) == IDOK)
+							if (MessageBox(NULL, L"Do you want to try this game againt?", L"???", MB_YESNO | MB_ICONQUESTION) == IDYES)
 								goto tryAgain;
 							else
 							{

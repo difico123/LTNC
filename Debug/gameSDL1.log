@@ -1,3 +1,4 @@
 ﻿  main.cpp
-C:\dev\gameSDL1\gameSDL1\main.cpp(224,22): warning C4018: '<': signed/unsigned mismatch
+C:\dev\gameSDL1\gameSDL1\main.cpp(45,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\dev\gameSDL1\gameSDL1\main.cpp(229,22): warning C4018: '<': signed/unsigned mismatch
   gameSDL1.vcxproj -> C:\dev\gameSDL1\Debug\gameSDL1.exe
