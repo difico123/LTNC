@@ -10,6 +10,9 @@
 const int NUM_THREAT = 3;
 TTF_Font* g_font_text = NULL;
 SDL_Surface* background = NULL;
+SDL_Surface* l_background = NULL;
+Mix_Chunk* g_sound = NULL;
+
 
 bool init()
 {
@@ -38,18 +41,30 @@ bool init()
 	}
 	g_font_text = TTF_OpenFont("fac.ttf", 30);
 
+	if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
+	{
+		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		return false;
+	}
+	g_sound = Mix_LoadWAV("AS.wav");
+	if (g_sound == NULL)
+	{
+		return false;
+	}
+
 	return success;
 }
-int main(int agv, char* argv[])
+int main(int agc, char* argv[])
 {
 	srand(time(NULL));
 	int Try = 0;
 tryAgain:
 	int bg_y		= 0;
-	int NUM1		= 0;
-	int NUM2		= 0;
-	int CNT			= 0;
-	int score		= 0;
+	int NUM1		= 0; // count time gun
+	int NUM2		= 0; // count time imt
+	int CNT			= 0; // count sore
+	//int score		= 0;
+	int y_val_threat = 2;
 	Try ++;
 	bool Is_quit = false;
 	if(	init() == false)
@@ -59,6 +74,8 @@ tryAgain:
     }
 	
 	// Background
+	l_background = LoadImage("lastimg.jpg");
+	if (l_background == NULL) printf("Failed to load pic!");
 
 	background = LoadImage("menu.jpg");
 	if (background == NULL) printf("Failed to load pic!");
@@ -66,6 +83,7 @@ tryAgain:
 	{
 		if (MessageBox(NULL, L"Are you want to play this game?", L"???", MB_YESNO |	MB_ICONQUESTION ) == IDYES)
 		{
+			Mix_PlayChannel(-1, g_sound, 0);
 			ApplySurface(background, g_screen, 43, 100);
 			SDL_Flip(g_screen);
 			SDL_Delay(2000);
@@ -125,27 +143,30 @@ tryAgain:
 
 	//thing
 
-	//thing[0] gun
+
 	things *thing = new things[2];
-	thing[0].SetRect(300, -200);
-	checkIMG = thing[0].LoadImg("sungbe.png");
-	if (!checkIMG)
-	{
-		return 0;
-	}
 	//thing[1] immortality
-	thing[1].SetRect(200, -400);
+	thing[1].SetRect(200, -200);
 	checkIMG = thing[1].LoadImg("daulau.png");
 	if (!checkIMG)
 	{
 		return 0;
 	}
+	//thing[0] gun
 
+	thing[0].SetRect(300, -400);
+	checkIMG = thing[0].LoadImg("sungbe.png");
+	if (!checkIMG)
+	{
+		return 0;
+	}
+	
 	//text
-	//game_time1 score
+	//game_time0 score
 	//game_time1 immortal time
-	//game_time1 gun time
+	//game_time2 gun time
 	Text* game_time = new Text[3];
+
 
 
 	while (!Is_quit)
@@ -174,9 +195,13 @@ tryAgain:
 		//text
 
 		CNT++;
+		if (CNT % 1000 == 0)
+		{
+			y_val_threat++;
+		}
 		string str_score = "SCORE: ";
-		int score = CNT;
-		string str_val = to_string(score);
+		//score = CNT;
+		string str_val = to_string(CNT);
 		str_score += str_val;
 		game_time[0].SetText(str_score);
 		game_time[0].CreateGameText(g_font_text, g_screen);
@@ -196,7 +221,7 @@ tryAgain:
 
 		//Things
 
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i <2 ; i++)
 		{
 			thing[i].HandleMove();
 			thing[i].Show(g_screen);
@@ -212,12 +237,12 @@ tryAgain:
 			{
 				if (i == 0)
 				{
-					threat->set_y_val(6);
+					threat->set_y_val(y_val_threat+3);
 					threat->HandleMove(-500);
 				}
 				else
 				{
-					threat->set_y_val(3);
+					threat->set_y_val(y_val_threat);
 					threat->HandleMove(-200);
 				}
 				threat->Show(g_screen);
@@ -225,7 +250,7 @@ tryAgain:
 
 			//check col bullet of my car and threats
 
-			std::vector<Bullet*> amo_list = mycar[0].GetBullet();
+			vector<Bullet*> amo_list = mycar[0].GetBullet();
 			for (int j = 0; j < amo_list.size(); j++)
 			{
 				Bullet* bullet = amo_list.at(j);
@@ -266,12 +291,15 @@ tryAgain:
 					bool Is_col = CheckCollision(mycar[0].GetRect(), threat->GetRect());
 					if (Is_col)
 					{
+						ApplySurface(l_background, g_screen, 0, 0);
+						SDL_Flip(g_screen);
+						SDL_Delay(2000);
 						string myString = "High Core: ";
-						myString += to_string(score-1);
+						myString += to_string(CNT-1);
 						LPWSTR ws = new wchar_t[myString.size() + 1];
 						copy(myString.begin(), myString.end(), ws);
 						ws[myString.size()] = 0;
-						if (MessageBox(NULL, ws,L"YOU DEAD", MB_OK) == IDOK)
+						if (MessageBox(NULL, ws,L"YOU DEAD!", MB_OK) == IDOK)
 						{
 							if (MessageBox(NULL, L"Do you want to try this game againt?", L"???", MB_YESNO | MB_ICONQUESTION) == IDYES)
 								goto tryAgain;
@@ -310,7 +338,6 @@ tryAgain:
 			if (cnt == 0)
 			thing[0].RemoveThings();
 		}
-		
 		if (SDL_Flip(g_screen) < 0)
 			return 0;
 	}

@@ -7,6 +7,7 @@
 #include<Windows.h>
 #include<stdio.h>
 #include<vector>
+#include<SDL_mixer.h>
 using namespace std;
 
 static const int SCREEN_WIDTH = 800;
