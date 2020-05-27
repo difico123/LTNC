@@ -1,10 +1,6 @@
 #include"Commonfunc.h"
 
-void CleanUp()
-{
-	SDL_FreeSurface(g_screen);
-	SDL_FreeSurface(g_background);
-}
+
 
 void ApplySurface(SDL_Surface* img, SDL_Surface* scr, int xx, int yy)
 {

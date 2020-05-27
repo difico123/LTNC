@@ -9,9 +9,11 @@
 
 const int NUM_THREAT = 3;
 TTF_Font* g_font_text = NULL;
-SDL_Surface* background = NULL;
-SDL_Surface* l_background = NULL;
+SDL_Surface* background1 = NULL; // show when you wait to play game
+SDL_Surface* background2 = NULL; // show when you dead
+SDL_Surface* background3 = NULL; // back ground totural
 Mix_Chunk* g_sound = NULL;
+SDL_Event g_event;
 
 
 bool init()
@@ -54,6 +56,15 @@ bool init()
 
 	return success;
 }
+
+void CleanUp()
+{
+	SDL_FreeSurface(g_screen);
+	SDL_FreeSurface(g_background);
+	SDL_FreeSurface(background2);
+	SDL_FreeSurface(background1);
+}
+
 int main(int agc, char* argv[])
 {
 	srand(time(NULL));
@@ -64,35 +75,54 @@ tryAgain:
 	int NUM2		= 0; // count time imt
 	int CNT			= 0; // count sore
 	//int score		= 0;
+	bool Is_quit = false;
+	bool quit = false;
 	int y_val_threat = 2;
 	Try ++;
-	bool Is_quit = false;
+
 	if(	init() == false)
 	{
 		printf("Failed to initialize!\n");
 		return 1;
     }
 	
-	// Background
-	l_background = LoadImage("lastimg.jpg");
-	if (l_background == NULL) printf("Failed to load pic!");
-
-	background = LoadImage("menu.jpg");
-	if (background == NULL) printf("Failed to load pic!");
+	// Background dead
+	background2 = LoadImage("lastimg.jpg");
+	if (background2 == NULL) printf("Failed to load pic!");
+	// Background waiting
+	background1 = LoadImage("menu.jpg");
+	if (background1 == NULL) printf("Failed to load pic!");
+	// Background toturial
+	background3 = LoadImage("huongdan.png");
+	if (background1 == NULL) printf("Failed to load pic!");
 	if (Try == 1)
 	{
 		if (MessageBox(NULL, L"Are you want to play this game?", L"???", MB_YESNO |	MB_ICONQUESTION ) == IDYES)
 		{
 			Mix_PlayChannel(-1, g_sound, 0);
-			ApplySurface(background, g_screen, 43, 100);
+			ApplySurface(background1, g_screen, 43, 100);
 			SDL_Flip(g_screen);
 			SDL_Delay(2000);
+			ApplySurface(background3, g_screen, 0, 0);
+			SDL_Flip(g_screen);
+			while (quit == false)
+			{
+				while (SDL_PollEvent(&g_event))
+				{
+					if (g_event.type == SDL_MOUSEBUTTONDOWN)
+					{
+						quit = true;
+						SDL_FreeSurface(background3);
+						break;
+					}
+				}
+			}
 		}
 		else return 0;
 	}
 	else
 	{
-		ApplySurface(background, g_screen, 43, 100);
+		ApplySurface(background1, g_screen, 43, 100);
 		SDL_Flip(g_screen);
 		SDL_Delay(2000);
 	}
@@ -206,12 +236,8 @@ tryAgain:
 		game_time[0].SetText(str_score);
 		game_time[0].CreateGameText(g_font_text, g_screen);
 		game_time[0].SetRect(SCREEN_WIDTH - 350, 10);
-		
-		
-		
 
 		// MYCAR
-
 
 		mycar[0].Show(g_screen);
 		mycar[0].Handle_move();
@@ -248,22 +274,7 @@ tryAgain:
 				threat->Show(g_screen);
 			}
 
-			//check col bullet of my car and threats
-
-			vector<Bullet*> amo_list = mycar[0].GetBullet();
-			for (int j = 0; j < amo_list.size(); j++)
-			{
-				Bullet* bullet = amo_list.at(j);
-				if (bullet != NULL)
-				{
-					bool check_col = CheckCollision(bullet->GetRect(), threat->GetRect());
-					if (check_col)
-					{
-						threat->ReSet(-300);
-						mycar[0].RemoveBullet(j);
-					}
-				}
-			}
+			
 			// Immortality
 			
 			bool check_col;
@@ -291,17 +302,17 @@ tryAgain:
 					bool Is_col = CheckCollision(mycar[0].GetRect(), threat->GetRect());
 					if (Is_col)
 					{
-						ApplySurface(l_background, g_screen, 0, 0);
+						ApplySurface(background2, g_screen, 0, 0);
 						SDL_Flip(g_screen);
 						SDL_Delay(2000);
 						string myString = "High Core: ";
-						myString += to_string(CNT-1);
+						myString += to_string(CNT);
 						LPWSTR ws = new wchar_t[myString.size() + 1];
 						copy(myString.begin(), myString.end(), ws);
 						ws[myString.size()] = 0;
 						if (MessageBox(NULL, ws,L"YOU DEAD!", MB_OK) == IDOK)
 						{
-							if (MessageBox(NULL, L"Do you want to try this game againt?", L"???", MB_YESNO | MB_ICONQUESTION) == IDYES)
+							if (MessageBox(NULL, L"Do you want to try this game again?", L"???", MB_YESNO | MB_ICONQUESTION) == IDYES)
 								goto tryAgain;
 							else
 							{
@@ -314,6 +325,22 @@ tryAgain:
 								return 1;
 							}
 						}
+					}
+				}
+			}
+			//check col bullet of my car and threats
+
+			vector<Bullet*> amo_list = mycar[0].GetBullet();
+			for (int j = 0; j < amo_list.size(); j++)
+			{
+				Bullet* bullet = amo_list.at(j);
+				if (bullet != NULL)
+				{
+					bool check_col = CheckCollision(bullet->GetRect(), threat->GetRect());
+					if (check_col)
+					{
+						threat->ReSet(-300);
+						mycar[0].RemoveBullet(j);
 					}
 				}
 			}

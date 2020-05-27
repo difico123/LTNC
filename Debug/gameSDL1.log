@@ -1,4 +1,8 @@
-﻿  main.cpp
-C:\dev\gameSDL1\gameSDL1\main.cpp(59,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\dev\gameSDL1\gameSDL1\main.cpp(254,22): warning C4018: '<': signed/unsigned mismatch
+﻿  MyCar.cpp
+C:\dev\gameSDL1\gameSDL1\MyCar.cpp(69,20): warning C4018: '<': signed/unsigned mismatch
+C:\dev\gameSDL1\gameSDL1\MyCar.cpp(76,20): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+C:\dev\gameSDL1\gameSDL1\main.cpp(70,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\dev\gameSDL1\gameSDL1\main.cpp(334,22): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
   gameSDL1.vcxproj -> C:\dev\gameSDL1\Debug\gameSDL1.exe

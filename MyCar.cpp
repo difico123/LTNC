@@ -47,7 +47,6 @@ void MyCar:: Handle_Input(SDL_Event ev)
 			Bullet* bullet = new Bullet();									// tao ra 1 vien dan
 			if (ev.button.button == SDL_BUTTON_LEFT)
 			{
-				//p_amo->SetWidthHeight(WIDTH_BULLET, HEIGHT_BULLET);
 				bullet->LoadImg("dan.png");
 			}
 			bullet->SetRect(this->rect_.x + WIDTH_MYCAR / 3 - 2, this->rect_.y + 15);
@@ -69,13 +68,7 @@ void MyCar::RemoveBullet(const int& p)
 {
 	for (int i = 0; i < bullet_.size(); i++)
 	{
-		//Bullet* bullet = bullet_.at(p);
 		bullet_.erase(bullet_.begin() + p);
-		/*if (bullet != NULL)
-		{
-			delete bullet;
-			bullet = NULL;
-		}*/
 	}
 }
 void MyCar::MakeBullet(SDL_Surface* scr)

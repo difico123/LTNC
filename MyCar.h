@@ -20,9 +20,6 @@ public:
 	void set_is_fire(bool is_fire) { is_fire_ = is_fire; }
 	bool get_is_fire()const { return is_fire_; }
 
-	/*int GetRect_y() const { return rect_.y; }
-	int GetRect_x() const { return rect_.x; }*/
-
 	void SetBullet(std::vector<Bullet*> bullet) { bullet_ = bullet; }
 	std::vector<Bullet*>GetBullet() const { return bullet_; }
 

@@ -19,7 +19,7 @@ void things::HandleMove()
 	if (rect_.y > SCREEN_HEIGHT)
 	{
 		rect_.y = -300;
-		int rand_x = rand() % (SCREEN_WIDTH - 200 - WIDTH_THING);
+		int rand_x = rand() % (SCREEN_WIDTH - 220 - WIDTH_THING);
 		if (rand_x > 100)
 			rect_.x = rand_x;
 	}
@@ -27,7 +27,7 @@ void things::HandleMove()
 void things::RemoveThings()
 {
 	rect_.y = -2000;
-	int rand_x = rand() % (SCREEN_WIDTH - 200 - WIDTH_THING);
+	int rand_x = rand() % (SCREEN_WIDTH - 220 - WIDTH_THING);
 	if (rand_x > 100)
 		rect_.x = rand_x;
 }
